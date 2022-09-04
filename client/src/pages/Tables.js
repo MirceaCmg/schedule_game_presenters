@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MaterialTable from "@material-table/core";
 import Swal from "sweetalert2";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,14 +9,21 @@ import EditTable from "../components/tables/EditTable";
 import { TABLES_ENDPOINT } from "../components/common/constants";
 import { AppWrapper } from "../components/common/shared.style";
 import { getTables } from "../redux/actions/tables";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/common/Loader";
+import { unsetTbChanged } from "../redux/actions/ui";
+import { Typography } from "@mui/material";
 
 const Tables = () => {
   const [tables, setTables] = useState([]);
   const [open, setOpen] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const [tableDetails, setTableDetails] = useState({});
+  const [loading, setLoading] = useState(true);
+  const { tableChanged } = useSelector((state) => state.ui);
+  const tableRef = useRef(null);
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
 
   const columns = [
     {
@@ -39,14 +46,20 @@ const Tables = () => {
     return body;
   };
 
+  console.log(tableChanged);
+
   useEffect(() => {
     fetchTables()
       .then((res) => {
         setTables(res);
         dispatch(getTables(res));
+        if (tableChanged) {
+          dispatch(unsetTbChanged());
+        }
+        setLoading(false);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [tableChanged]);
 
   console.log(tables);
 
@@ -110,8 +123,17 @@ const Tables = () => {
       [event.target.name]: event.target.value,
     });
   };
+  if (!user) {
+    return (
+      <AppWrapper>
+        <Typography>You do not have permission to see this page</Typography>
+      </AppWrapper>
+    );
+  }
 
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <AppWrapper>
       <CreateTable
         handleChange={handleChange}
@@ -131,6 +153,7 @@ const Tables = () => {
         title="Tables"
         columns={columns}
         data={tables}
+        tableRef={tableRef}
         style={{ width: "100%" }}
         options={{
           search: false,

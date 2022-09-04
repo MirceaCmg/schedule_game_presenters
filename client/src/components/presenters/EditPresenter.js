@@ -2,7 +2,7 @@ import * as React from "react";
 import { Grid, TextField } from "@mui/material";
 import AppDialog from "../common/AppDialog";
 import { PRESENTERS_ENDPOINT } from "../common/constants";
-import { changed } from "../../redux/actions/ui";
+import { presenterChanged } from "../../redux/actions/ui";
 import { useDispatch } from "react-redux";
 
 const EditPresenter = ({
@@ -28,7 +28,7 @@ const EditPresenter = ({
     )
       .json()
       .then(() => {
-        dispatch(changed(true));
+        dispatch(presenterChanged(true));
         setOpen(false);
       });
 

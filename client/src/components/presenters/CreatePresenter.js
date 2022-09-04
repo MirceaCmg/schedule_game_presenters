@@ -4,7 +4,7 @@ import AppDialog from "../common/AppDialog";
 import { PRESENTERS_ENDPOINT } from "../common/constants";
 import AppButton from "../common/AppButton";
 import { useDispatch } from "react-redux";
-import { changed } from "../../redux/actions/ui";
+import { presenterChanged } from "../../redux/actions/ui";
 
 const CreatePresenter = ({ setOpenCreate, openCreate, handleCloseModal }) => {
   const [newPresenter, setNewPresenter] = useState("");
@@ -25,7 +25,7 @@ const CreatePresenter = ({ setOpenCreate, openCreate, handleCloseModal }) => {
     )
       .json()
       .then(() => {
-        dispatch(changed(true));
+        dispatch(presenterChanged(true));
         setOpenCreate(false);
       });
 

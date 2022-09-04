@@ -9,4 +9,12 @@ const AppWrapper = styled(Grid)(() => ({
   },
 }));
 
-export { AppWrapper };
+const LoaderContainer = styled("div")(() => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  flex: 1,
+}));
+
+export { AppWrapper, LoaderContainer };

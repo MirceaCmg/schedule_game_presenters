@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import MaterialTable from "@material-table/core";
 import Swal from "sweetalert2";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,17 +9,20 @@ import CreatePresenter from "../components/presenters/CreatePresenter";
 import { PRESENTERS_ENDPOINT } from "../components/common/constants";
 import { AppWrapper } from "../components/common/shared.style";
 import { useDispatch, useSelector } from "react-redux";
-import { unsetChanged } from "../redux/actions/ui";
+import { unsetPresenterChanged } from "../redux/actions/ui";
 import { getPresenters } from "../redux/actions/presenters";
+import Loader from "../components/common/Loader";
+import { Typography } from "@mui/material";
 
 const Presenters = () => {
   const [presenters, setPresenters] = useState([]);
   const [open, setOpen] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const [presenterDetails, setPresenterDetails] = useState({});
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  const tableRef = useRef(null);
   const { presentersChanged } = useSelector((state) => state.ui);
+  const { user } = useSelector((state) => state.user);
 
   const columns = [
     {
@@ -62,8 +65,9 @@ const Presenters = () => {
         setPresenters(res);
         dispatch(getPresenters(res));
         if (presentersChanged) {
-          dispatch(unsetChanged());
+          dispatch(unsetPresenterChanged(false));
         }
+        setLoading(false);
       })
       .catch((err) => console.log(err));
   }, [presentersChanged]);
@@ -114,7 +118,17 @@ const Presenters = () => {
     });
   };
 
-  return (
+  if (!user) {
+    return (
+      <AppWrapper>
+        <Typography>You do not have permission to see this page</Typography>
+      </AppWrapper>
+    );
+  }
+
+  return loading ? (
+    <Loader />
+  ) : (
     <AppWrapper>
       <CreatePresenter
         handleChange={handleChange}
@@ -134,7 +148,6 @@ const Presenters = () => {
         title="Game presenters"
         columns={columns}
         data={presenters}
-        tableRef={tableRef}
         style={{ width: "100%" }}
         options={{
           search: false,

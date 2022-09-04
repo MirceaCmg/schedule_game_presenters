@@ -3,9 +3,12 @@ import { Grid, TextField } from "@mui/material";
 import AppDialog from "../common/AppDialog";
 import { TABLES_ENDPOINT } from "../common/constants";
 import AppButton from "../common/AppButton";
+import { tbChanged } from "../../redux/actions/ui";
+import { useDispatch } from "react-redux";
 
 const CreateTable = ({ setOpenCreate, openCreate, handleCloseModal }) => {
   const [newTable, setNewTable] = useState("");
+  const dispatch = useDispatch();
 
   /**
    * createPresenter
@@ -21,7 +24,10 @@ const CreateTable = ({ setOpenCreate, openCreate, handleCloseModal }) => {
       })
     )
       .json()
-      .then(() => setOpenCreate(false));
+      .then(() => {
+        dispatch(tbChanged(true));
+        setOpenCreate(false);
+      });
 
     return await data;
   };

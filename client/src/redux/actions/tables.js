@@ -7,7 +7,7 @@ const slice = createSlice({
   },
   reducers: {
     tables: (state, action) => {
-      state.presenters = action.payload;
+      state.tables = action.payload;
     },
   },
 });

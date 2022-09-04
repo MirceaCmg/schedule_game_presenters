@@ -2,6 +2,8 @@ import * as React from "react";
 import { Grid, TextField } from "@mui/material";
 import AppDialog from "../common/AppDialog";
 import { TABLES_ENDPOINT } from "../common/constants";
+import { useDispatch } from "react-redux";
+import { tbChanged } from "../../redux/actions/ui";
 
 const EditTable = ({
   tableDetails,
@@ -10,6 +12,7 @@ const EditTable = ({
   handleChange,
   setOpen,
 }) => {
+  const dispatch = useDispatch();
   /**
    * editPresenter
    */
@@ -24,7 +27,10 @@ const EditTable = ({
       })
     )
       .json()
-      .then(() => setOpen(false));
+      .then(() => {
+        dispatch(tbChanged(true));
+        setOpen(false);
+      });
 
     return await data;
   };
